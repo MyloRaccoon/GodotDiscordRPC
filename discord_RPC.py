@@ -19,10 +19,10 @@ class RPC:
 	def update(self, data: GodotData):
 		try:
 			self.presence.update(
-				large_image= "godotdiscord.png",
+				name = "Godot Engine",
+				large_image = "godotdiscord.png",
 				details = f"Project {data.project}",
 				state = f"Edtiting scene {data.scene}",
-				large_text = "Godot Engine"
 			)
 			print("updating...")
 		except DiscordNotFound:

@@ -49,7 +49,7 @@ class GodotListener:
 				title = win32gui.GetWindowText(hwnd)
 				if not title: return
 				if title in ("MSCTFIME UI", "Default IME"): return
-				if title and "godot" in title.lower():
+				if title and "godot" in title.lower() and not "(DEBUG)" in title:
 					titles.append(title)
 
 		win32gui.EnumWindows(enum_callback, None)
