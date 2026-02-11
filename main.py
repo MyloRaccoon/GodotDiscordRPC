@@ -1,28 +1,31 @@
-from godot_listener import GodotListener, GodotData
-from discord_RPC import RPC
-import time
+from pystray import Icon, Menu, MenuItem
+from PIL import Image
+import threading
+from server import Server
+import os, sys
 
-def on_data_changed(rpc: RPC, data: GodotData|None):
-	print(data)
-	if not data:
-		rpc.clear()
-	else:
-		rpc.update(data)
+os.chdir(os.path.dirname(os.path.abspath(sys.argv[0])))
 
-if __name__ == '__main__':
-	listener = GodotListener()
-	rpc = RPC()
-	last_data = listener.get_last_data()
-	
-	if last_data:
-		rpc.update(last_data)
+stop_event = threading.Event()
 
-	while True:
+server = Server()
 
-		new_data = listener.get_last_data()
+def on_quit_clicked(icon, item):
+    stop_event.set()
+    icon.stop()
 
-		if new_data != last_data:
-			on_data_changed(rpc, new_data)
-			last_data = new_data
+icon = Icon(
+    name='Godot RPC',
+    icon= Image.open("godotdiscord.png"),
+    menu=Menu(
+        MenuItem("quit", on_quit_clicked)
+    )
+)
 
-		time.sleep(0.5)
+threading.Thread(
+    target=server.run,
+    args=(stop_event,),
+    daemon=True
+).start()
+
+icon.run()
