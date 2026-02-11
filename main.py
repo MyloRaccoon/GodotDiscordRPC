@@ -3,6 +3,7 @@ from PIL import Image
 import threading
 from server import Server
 import os, sys
+from logger import log
 
 os.chdir(os.path.dirname(os.path.abspath(sys.argv[0])))
 
@@ -13,6 +14,7 @@ server = Server()
 def on_quit_clicked(icon, item):
     stop_event.set()
     icon.stop()
+    log("Godot RPC closed")
 
 icon = Icon(
     name='Godot RPC',

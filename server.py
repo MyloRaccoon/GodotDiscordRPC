@@ -3,6 +3,7 @@ from discord_RPC import RPC
 import time
 from dotenv import load_dotenv
 import os
+from logger import log
 
 load_dotenv()
 UPDATE_FREQUENCE = float(os.getenv('UPDATE_FREQUENCE'))
@@ -17,10 +18,14 @@ class Server:
 	def on_data_changed(self, data: GodotData|None):
 		if not data:
 			self.rpc.clear()
+			log("Godot RPC cleared")
 		else:
 			self.rpc.update(data)
+			log(f"Godot RPC changed: {data}")
 
 	def run(self, stop_event):
+
+		log("Godot RPC started")
 		
 		if self.last_data:
 			self.rpc.update(self.last_data)

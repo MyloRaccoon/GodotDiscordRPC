@@ -8,8 +8,6 @@ from godot_listener import GodotData
 load_dotenv()
 CLIENT_ID = os.getenv('CLIENT_ID')
 
-print("CLIENT_ID =", CLIENT_ID, type(CLIENT_ID))
-
 class RPC:
 
 	def __init__(self):
