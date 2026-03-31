@@ -40,28 +40,38 @@ class GodotListener:
 			self.process = self.find_godot_process()
 
 	def get_window_title(self) -> str|None:
+		if not self.process: return None
+
 		titles = []
 
-		def enum_callback(hwnd, _):
-			if not win32gui.IsWindow(hwnd): return
-			_, win_pid = win32process.GetWindowThreadProcessId(hwnd)
-			if win_pid == self.process.pid:
-				title = win32gui.GetWindowText(hwnd)
-				if not title: return
-				if title in ("MSCTFIME UI", "Default IME"): return
-				if title and "godot" in title.lower() and not "(DEBUG)" in title:
-					titles.append(title)
+		try:
 
-		win32gui.EnumWindows(enum_callback, None)
-		if len(titles) == 0: return None
-		return titles[0]
+			def enum_callback(hwnd, _):
+				if not win32gui.IsWindow(hwnd): return
+				_, win_pid = win32process.GetWindowThreadProcessId(hwnd)
+				if win_pid == self.process.pid:
+					title = win32gui.GetWindowText(hwnd)
+					if not title: return
+					if title in ("MSCTFIME UI", "Default IME"): return
+					if title and "godot" in title.lower() and not "(DEBUG)" in title:
+						titles.append(title)
+
+			win32gui.EnumWindows(enum_callback, None)
+		except Exception:
+			return None
+
+		return titles[0] if titles else None
 
 	def get_last_data(self) -> GodotData|None:
 		self.update_process()
 		if not self.process: return None
-		window_title = self.get_window_title()
-		if not window_title: return None
-		items = window_title.split('-')
-		scene = items[0].strip()
-		project = items[1].strip()
-		return GodotData(project, scene)
+
+		try:
+			window_title = self.get_window_title()
+			if not window_title: return None
+			items = window_title.split('-')
+			scene = items[0].strip()
+			project = items[1].strip()
+			return GodotData(project, scene)
+		except Exception:
+			return None

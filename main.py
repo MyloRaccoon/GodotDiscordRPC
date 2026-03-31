@@ -24,10 +24,10 @@ icon = Icon(
     )
 )
 
-threading.Thread(
+thread = threading.Thread(
     target=server.run,
-    args=(stop_event,),
-    daemon=True
-).start()
-
+    args=(stop_event,)
+)
+thread.start()
 icon.run()
+thread.join()
